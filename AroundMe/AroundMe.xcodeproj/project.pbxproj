@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3717EBAA2F4345470003C625 /* GooglePlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 3717EBA92F4345470003C625 /* GooglePlaces */; };
 		3717EBAC2F4345470003C625 /* GooglePlacesSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3717EBAB2F4345470003C625 /* GooglePlacesSwift */; };
+		3717EBDB2F4363F40003C625 /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 3717EBDA2F4363F40003C625 /* GoogleMaps */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			files = (
 				3717EBAA2F4345470003C625 /* GooglePlaces in Frameworks */,
 				3717EBAC2F4345470003C625 /* GooglePlacesSwift in Frameworks */,
+				3717EBDB2F4363F40003C625 /* GoogleMaps in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				3717EBA92F4345470003C625 /* GooglePlaces */,
 				3717EBAB2F4345470003C625 /* GooglePlacesSwift */,
+				3717EBDA2F4363F40003C625 /* GoogleMaps */,
 			);
 			productName = AroundMe;
 			productReference = 3717EB902F433D290003C625 /* AroundMe.app */;
@@ -118,6 +121,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				3717EBA82F4345470003C625 /* XCRemoteSwiftPackageReference "ios-places-sdk" */,
+				3717EBD92F4363F40003C625 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3717EB912F433D290003C625 /* Products */;
@@ -162,7 +166,6 @@
 				INFOPLIST_FILE = AroundMe/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -194,7 +197,6 @@
 				INFOPLIST_FILE = AroundMe/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -367,6 +369,14 @@
 				minimumVersion = 10.8.0;
 			};
 		};
+		3717EBD92F4363F40003C625 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googlemaps/ios-maps-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -379,6 +389,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3717EBA82F4345470003C625 /* XCRemoteSwiftPackageReference "ios-places-sdk" */;
 			productName = GooglePlacesSwift;
+		};
+		3717EBDA2F4363F40003C625 /* GoogleMaps */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3717EBD92F4363F40003C625 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */;
+			productName = GoogleMaps;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
