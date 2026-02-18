@@ -10,17 +10,15 @@ import GoogleMaps
 import GooglePlaces
 import CoreLocation
 
-class MapViewController: UIViewController {
+final class MapViewController: UIViewController {
     
-    private var mainView: MapView {
-        return self.view as! MapView
-    }
+    private let mainView = MapView()
     
     private let locationManager = CLLocationManager()
     private let placesService = PlacesService()
     
     override func loadView() {
-        self.view = MapView()
+        view = mainView
     }
     
     override func viewDidLoad() {
@@ -48,15 +46,6 @@ class MapViewController: UIViewController {
         default: break
         }
     }
-    
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        let okAction = UIAlertAction(title: "OK", style: .default)
-        alert.addAction(okAction)
-        
-        self.present(alert, animated: true)
-    }
 }
 
 extension MapViewController: CLLocationManagerDelegate {
@@ -72,8 +61,13 @@ extension MapViewController: CLLocationManagerDelegate {
         
         mainView.moveCameraToUser(location.coordinate)
         
-        placesService.searchNearby(at: location.coordinate) { [weak self] places in
-            self?.mainView.renderMarkers(for: places)
+        placesService.searchNearby(at: location.coordinate) { [weak self] result in
+            switch result {
+            case .success(let places):
+                self?.mainView.renderMarkers(for: places)
+            case .failure(let error):
+                self?.showAlert(title: "Couldn't find places nearby", message: "\(error.localizedDescription)")
+            }
         }
     }
     
@@ -81,6 +75,18 @@ extension MapViewController: CLLocationManagerDelegate {
         if let clError = error as? CLError, clError.code == .locationUnknown {
             return
         }
-        showAlert(title: "Something got wrong", message: "\(error.localizedDescription)")
+        showAlert(title: "An error occurred related to geolocation", message: "\(error.localizedDescription)")
+    }
+}
+
+private extension MapViewController {
+    
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        
+        self.present(alert, animated: true)
     }
 }
