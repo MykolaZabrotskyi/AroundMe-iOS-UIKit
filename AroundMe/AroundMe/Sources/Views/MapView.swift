@@ -7,10 +7,11 @@
 
 import UIKit
 import GoogleMaps
+import GooglePlaces
 
 class MapView: UIView {
     
-    let mapView: GMSMapView
+    private(set) var mapView: GMSMapView
     
     override init(frame: CGRect) {
         let options = GMSMapViewOptions()
@@ -39,6 +40,23 @@ class MapView: UIView {
     private func applyStylingToMap() {
         mapView.mapType = .normal
         
+        let mapStyleJson = """
+        [
+          {
+            "featureType": "poi",
+            "stylers": [
+              { "visibility": "off" }
+            ]
+          }
+        ]
+        """
+        
+        do {
+            mapView.mapStyle = try GMSMapStyle(jsonString: mapStyleJson)
+        } catch {
+            fatalError("Error: \(error)")
+        }
+        
         mapView.isIndoorEnabled = false
         mapView.isTrafficEnabled = false
         mapView.isTransitEnabled = false
@@ -55,8 +73,23 @@ class MapView: UIView {
         mapView.settings.consumesGesturesInView = true
     }
     
-    func moveCameraToUser(_ location: CLLocationCoordinate2D, zoom: Float = 15.0) {
+    func updateMyLocationEnabled(_ enabled: Bool) {
+        mapView.isMyLocationEnabled = enabled
+    }
+    
+    func moveCameraToUser(_ location: CLLocationCoordinate2D, zoom: Float = 13.0) {
         let camera = GMSCameraPosition.camera(withTarget: location, zoom: zoom)
         mapView.animate(to: camera)
+    }
+    
+    func renderMarkers(for places: [PlaceModel]) {
+        // mapView.clear()
+        for place in places {
+            let marker = GMSMarker(position: place.coordinate)
+            marker.title = place.name
+            marker.snippet = place.fullAddress
+            marker.appearAnimation = .pop
+            marker.map = mapView
+        }
     }
 }
