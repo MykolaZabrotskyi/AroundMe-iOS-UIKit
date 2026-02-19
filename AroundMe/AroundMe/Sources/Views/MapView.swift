@@ -11,32 +11,77 @@ import GooglePlaces
 
 final class MapView: UIView {
     
-    private var mapView: GMSMapView = {
+    private lazy var mapView: GMSMapView = {
         let options = GMSMapViewOptions()
         options.backgroundColor = .systemBackground
         
         let map = GMSMapView(options: options)
         map.mapType = .normal
-        map.isIndoorEnabled = false
-        map.isTrafficEnabled = false
-        map.isTransitEnabled = false
         map.isBuildingsEnabled = false
         
-        map.settings.myLocationButton = true
         map.settings.rotateGestures = false
-        map.settings.tiltGestures = false
-        map.settings.consumesGesturesInView = true
         
         map.accessibilityElementsHidden = false
         
         return map
     }()
     
+    private lazy var listButton: UIButton = {
+        var configuration = UIButton.Configuration.glass()
+        
+        configuration.image = UIImage(systemName: "list.bullet")
+        configuration.imagePlacement = .all
+        
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
+        configuration.preferredSymbolConfigurationForImage = symbolConfig
+        
+        let button = UIButton(configuration: configuration)
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    private lazy var mapButton: UIButton = {
+        var configuration = UIButton.Configuration.glass()
+        
+        configuration.image = UIImage(systemName: "location.fill")
+        configuration.imagePlacement = .all
+        
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
+        configuration.preferredSymbolConfigurationForImage = symbolConfig
+        
+        let button = UIButton(configuration: configuration)
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.addTarget(self, action: #selector(mapButtonTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    var onMapButtonTapped: (() -> Void)?
+    
+    private lazy var buttonsStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [listButton, mapButton])
+        
+        stackView.axis = .vertical
+        
+        stackView.spacing = 16
+        
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setupLayout()
-        setupMapConfiguration()
+        applyMapStyle()
     }
     
     required init?(coder: NSCoder) {
@@ -67,28 +112,38 @@ final class MapView: UIView {
 
 private extension MapView {
     
+    @objc func mapButtonTapped() {
+        if let coordinate = mapView.myLocation?.coordinate {
+            moveCameraToUser(coordinate)
+        } else {
+            onMapButtonTapped?()
+        }
+    }
+    
     func setupLayout() {
         mapView.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(mapView)
+        addSubview(buttonsStackView)
         
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: topAnchor),
             mapView.leadingAnchor.constraint(equalTo: leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            mapView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            mapView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            buttonsStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            buttonsStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            buttonsStackView.widthAnchor.constraint(equalToConstant: 70),
+            listButton.heightAnchor.constraint(equalToConstant: 70),
+            mapButton.heightAnchor.constraint(equalToConstant: 70)
         ])
-    }
-    
-    func setupMapConfiguration() {
-        applyMapStyle()
-        
-        mapView.padding = Constants.mapInsets
     }
     
     func applyMapStyle() {
         guard let url = Bundle.main.url(forResource: "MapStyle", withExtension: "json") else {
             assertionFailure("MapStyle.json not found in bundle")
+            
             return
         }
         
@@ -104,12 +159,6 @@ private extension MapView {
     
     enum Constants {
         static let zoomCameraOnUser: Float = 13.0
-        static let mapInsets = UIEdgeInsets(
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0
-        )
     }
 }
 

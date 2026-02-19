@@ -24,8 +24,11 @@ final class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLocationManager()
+        
+        mainView.onMapButtonTapped = { [weak self] in
+            self?.locationManager.startUpdatingLocation()
+        }
     }
-    
 }
 
 extension MapViewController: CLLocationManagerDelegate {

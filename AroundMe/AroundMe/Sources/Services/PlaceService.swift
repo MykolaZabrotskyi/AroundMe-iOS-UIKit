@@ -12,12 +12,18 @@ final class PlacesService {
     
     func searchNearby(at location: CLLocationCoordinate2D, completion: @escaping (Result<[PlaceModel], Error>) -> Void) {
         let circularRestriction = GMSPlaceCircularLocationOption(location, Constants.searchRadius)
-        let properties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.addressComponents].map { $0.rawValue }
+        let properties = [
+            GMSPlaceProperty.name,
+            GMSPlaceProperty.coordinate,
+            GMSPlaceProperty.addressComponents,
+            GMSPlaceProperty.iconImageURL,
+            GMSPlaceProperty.rating
+        ].map { $0.rawValue }
+        
         let request = GMSPlaceSearchNearbyRequest(locationRestriction: circularRestriction, placeProperties: properties)
         request.includedTypes = Constants.includedPlaceTypes
         
         GMSPlacesClient.shared().searchNearby(with: request) { results, error in
-            
             guard let results, error == nil else {
                 let errorToReturn = error ??
                 NSError(
@@ -29,6 +35,7 @@ final class PlacesService {
                 DispatchQueue.main.async {
                     completion(.failure(errorToReturn))
                 }
+                
                 return
             }
             
@@ -36,7 +43,9 @@ final class PlacesService {
                 PlaceModel(
                     name: gmsPlace.name ?? "",
                     coordinate: gmsPlace.coordinate,
-                    fullAddress: PlacesService.formatAddress(gmsPlace.addressComponents)
+                    fullAddress: PlacesService.formatAddress(gmsPlace.addressComponents),
+                    iconURL: gmsPlace.iconImageURL,
+                    rating: gmsPlace.rating > 0 ? gmsPlace.rating : nil
                 )
             }
             
