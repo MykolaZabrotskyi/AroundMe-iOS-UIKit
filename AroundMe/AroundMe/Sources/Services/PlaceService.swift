@@ -11,7 +11,6 @@ import GooglePlaces
 final class PlacesService {
     
     func searchNearby(at location: CLLocationCoordinate2D, completion: @escaping (Result<[PlaceModel], Error>) -> Void) {
-        
         let circularRestriction = GMSPlaceCircularLocationOption(location, Constants.searchRadius)
         let properties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.addressComponents].map { $0.rawValue }
         let request = GMSPlaceSearchNearbyRequest(locationRestriction: circularRestriction, placeProperties: properties)
@@ -51,8 +50,7 @@ final class PlacesService {
 private extension PlacesService {
     
     static func formatAddress(_ components: [GMSAddressComponent]?) -> String {
-        
-        guard let components = components else {
+        guard let components else {
             return ""
         }
         
@@ -77,5 +75,4 @@ private extension PlacesService {
             static let descriptionKey = "Unknown error"
         }
     }
-    
 }

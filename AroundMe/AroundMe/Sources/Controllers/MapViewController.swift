@@ -61,7 +61,7 @@ extension MapViewController: CLLocationManagerDelegate {
             return
         }
         showAlert(
-            title: Constants.Alert.LocationManagerFailed.title,
+            title: Constants.Alert.LocationManagerFailure.title,
             message: error.localizedDescription
         )
     }
@@ -96,14 +96,13 @@ private extension MapViewController {
             
         case .denied, .restricted:
             showAlert(
-                title: Constants.Alert.AutorizationDenied.title,
-                message: Constants.Alert.AutorizationDenied.message
+                title: Constants.Alert.AuthorizationDenied.title,
+                message: Constants.Alert.AuthorizationDenied.message
             )
             
         default: break
         }
     }
-    
 }
 
 private extension MapViewController {
@@ -118,15 +117,14 @@ private extension MapViewController {
                 static let title = "Couldn't find places nearby"
             }
             
-            enum LocationManagerFailed {
+            enum LocationManagerFailure {
                 static let title = "An error occurred related to geolocation"
             }
             
-            enum AutorizationDenied {
+            enum AuthorizationDenied {
                 static let title = "Access to geolocation is restricted"
                 static let message = "To allow the app to find places around you, allow location access in settings."
             }
         }
     }
-    
 }

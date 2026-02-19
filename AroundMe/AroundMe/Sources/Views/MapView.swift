@@ -11,7 +11,7 @@ import GooglePlaces
 
 final class MapView: UIView {
     
-    private(set) var mapView: GMSMapView = {
+    private var mapView: GMSMapView = {
         let options = GMSMapViewOptions()
         options.backgroundColor = .systemBackground
         
@@ -43,39 +43,6 @@ final class MapView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupLayout() {
-        mapView.translatesAutoresizingMaskIntoConstraints = false
-        
-        addSubview(mapView)
-        
-        NSLayoutConstraint.activate([
-            mapView.topAnchor.constraint(equalTo: topAnchor),
-            mapView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            mapView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            mapView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-    }
-    
-    private func setupMapConfiguration() {
-        applyMapStyle()
-        
-        mapView.padding = Constants.mapInsets
-    }
-    
-    private func applyMapStyle() {
-        
-        guard let url = Bundle.main.url(forResource: "MapStyle", withExtension: "json") else {
-            assertionFailure("MapStyle.json not found in bundle")
-            return
-        }
-        
-        do {
-            mapView.mapStyle = try GMSMapStyle(contentsOfFileURL: url)
-        } catch {
-            assertionFailure("Failed to apply map style: \(error.localizedDescription)")
-        }
-    }
-    
     func updateMyLocationEnabled(_ enabled: Bool) {
         mapView.isMyLocationEnabled = enabled
     }
@@ -86,7 +53,6 @@ final class MapView: UIView {
     }
     
     func renderMarkers(for places: [PlaceModel]) {
-        
         mapView.clear()
         
         for place in places {
@@ -101,16 +67,49 @@ final class MapView: UIView {
 
 private extension MapView {
     
+    func setupLayout() {
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(mapView)
+        
+        NSLayoutConstraint.activate([
+            mapView.topAnchor.constraint(equalTo: topAnchor),
+            mapView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            mapView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            mapView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+    
+    func setupMapConfiguration() {
+        applyMapStyle()
+        
+        mapView.padding = Constants.mapInsets
+    }
+    
+    func applyMapStyle() {
+        guard let url = Bundle.main.url(forResource: "MapStyle", withExtension: "json") else {
+            assertionFailure("MapStyle.json not found in bundle")
+            return
+        }
+        
+        do {
+            mapView.mapStyle = try GMSMapStyle(contentsOfFileURL: url)
+        } catch {
+            assertionFailure("Failed to apply map style: \(error.localizedDescription)")
+        }
+    }
+}
+
+private extension MapView {
+    
     enum Constants {
         static let zoomCameraOnUser: Float = 13.0
-        
         static let mapInsets = UIEdgeInsets(
             top: 0,
             left: 0,
             bottom: 0,
             right: 0
         )
-
     }
 }
 
