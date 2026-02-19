@@ -28,6 +28,7 @@ final class MapView: UIView {
         map.settings.consumesGesturesInView = true
         
         map.accessibilityElementsHidden = false
+        
         return map
     }()
     
@@ -44,7 +45,9 @@ final class MapView: UIView {
     
     private func setupLayout() {
         mapView.translatesAutoresizingMaskIntoConstraints = false
+        
         addSubview(mapView)
+        
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: topAnchor),
             mapView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -56,15 +59,11 @@ final class MapView: UIView {
     private func setupMapConfiguration() {
         applyMapStyle()
         
-        mapView.padding = UIEdgeInsets(
-            top: Constants.MapEdges.top,
-            left: Constants.MapEdges.left,
-            bottom: Constants.MapEdges.bottom,
-            right: Constants.MapEdges.right
-        )
+        mapView.padding = Constants.mapInsets
     }
     
     private func applyMapStyle() {
+        
         guard let url = Bundle.main.url(forResource: "MapStyle", withExtension: "json") else {
             assertionFailure("MapStyle.json not found in bundle")
             return
@@ -87,7 +86,9 @@ final class MapView: UIView {
     }
     
     func renderMarkers(for places: [PlaceModel]) {
+        
         mapView.clear()
+        
         for place in places {
             let marker = GMSMarker(position: place.coordinate)
             marker.title = place.name
@@ -103,11 +104,13 @@ private extension MapView {
     enum Constants {
         static let zoomCameraOnUser: Float = 13.0
         
-        enum MapEdges {
-            static let top: Double = 0
-            static let left: Double = 0
-            static let bottom: Double = 0
-            static let right: Double = 0
-        }
+        static let mapInsets = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0
+        )
+
     }
 }
+
