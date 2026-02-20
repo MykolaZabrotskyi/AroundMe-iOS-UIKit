@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class ListViewController: UIViewController {
     
@@ -33,6 +34,8 @@ final class ListViewController: UIViewController {
         mainView.tableView.delegate = self
         mainView.tableView.dataSource = self
     }
+    
+    var onPlaceSelected: ((CLLocationCoordinate2D) -> Void)?
 }
 
 extension ListViewController: UITableViewDataSource, UITableViewDelegate {
@@ -57,6 +60,8 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let selectedPlace = places[indexPath.row]
+        onPlaceSelected?(selectedPlace.coordinate)
     }
 }
 

@@ -81,12 +81,12 @@ final class PlaceTableViewCell: UITableViewCell {
     
     func configure(with place: PlaceModel) {
         nameLabel.text = place.name
-        addressLabel.text = place.fullAddress.isEmpty ? "Address not available" : place.fullAddress
+        addressLabel.text = place.fullAddress.isEmpty ? Constants.Labels.EmptyText.adress : place.fullAddress
         
         if let rating = place.rating {
             ratingLabel.text = "★ \(String(format: "%.1f", rating))"
         } else {
-            ratingLabel.text = "No rating"
+            ratingLabel.text = Constants.Labels.EmptyText.rating
         }
         
         iconImageView.kf.setImage(
@@ -99,13 +99,25 @@ final class PlaceTableViewCell: UITableViewCell {
         contentView.addSubview(cellHStackView)
         
         NSLayoutConstraint.activate([
-            cellHStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            cellHStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            cellHStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            cellHStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            cellHStackView.topAnchor.constraint(
+                equalTo: contentView.topAnchor,
+                constant: Constants.StackConstants.Layout.verticalAnchor
+            ),
+            cellHStackView.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: Constants.StackConstants.Layout.horizontalAnchor
+            ),
+            cellHStackView.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -Constants.StackConstants.Layout.horizontalAnchor
+            ),
+            cellHStackView.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -Constants.StackConstants.Layout.verticalAnchor
+            ),
             
-            iconImageView.widthAnchor.constraint(equalToConstant: 40),
-            iconImageView.heightAnchor.constraint(equalToConstant: 40)
+            iconImageView.widthAnchor.constraint(equalToConstant: Constants.iconImage.layoutSize),
+            iconImageView.heightAnchor.constraint(equalToConstant: Constants.iconImage.layoutSize)
         ])
     }
 }
@@ -118,7 +130,8 @@ private extension PlaceTableViewCell {
             static let numberOfLines: Int = 0
             
             enum EmptyText {
-                static let adress: String = ""
+                static let adress: String = "Address not available"
+                static let rating: String = "No rating"
             }
             
             enum Fonts {
@@ -135,12 +148,18 @@ private extension PlaceTableViewCell {
         }
         
         enum StackConstants {
-            static let spacingForVStack: CGFloat = 6
+            static let spacingForVStack: CGFloat = 6.0
             static let spacingForHStack: CGFloat = spacingForVStack * 2
+            
+            enum Layout {
+                static let verticalAnchor: CGFloat = 12.0
+                static let horizontalAnchor: CGFloat = 16.0
+            }
         }
         
         enum iconImage {
-            static let placeHolderSystemImage = "arrow.down.circle.dotted"
+            static let placeHolderSystemImage: String = "arrow.down.circle.dotted"
+            static let layoutSize: CGFloat = 40.0
         }
     }
 }

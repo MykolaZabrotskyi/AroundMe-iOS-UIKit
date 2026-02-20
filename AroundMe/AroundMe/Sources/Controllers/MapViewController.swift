@@ -38,6 +38,11 @@ final class MapViewController: UIViewController {
             
             let listVC = ListViewController(places: self.fetchedPlaces)
             self.navigationController?.pushViewController(listVC, animated: true)
+            
+            listVC.onPlaceSelected = { [weak self] coordinate in
+                self?.mainView.moveCameraToUser(coordinate)
+                self?.navigationController?.popViewController(animated: true)
+            }
         }
     }
 }
