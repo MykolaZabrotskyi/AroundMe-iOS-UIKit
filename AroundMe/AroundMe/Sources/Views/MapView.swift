@@ -152,7 +152,7 @@ private extension MapView {
 private extension MapView {
     
     enum Constants {
-        static let zoomCameraOnUser: Float = 13.0
+        static let zoomCameraOnUser: Float = 16.0
         
         enum Buttons {
             static let systemImageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
