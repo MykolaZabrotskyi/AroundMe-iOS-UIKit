@@ -76,12 +76,12 @@ private extension PlacesService {
     
     enum Constants {
         static let searchRadius: Double = 5000.0
-        static let includedPlaceTypes = ["restaurant", "cafe"]
+        static let includedPlaceTypes: [String] = ["restaurant", "cafe"]
         
         enum ErrorConstants {
-            static let domain = "AroundMe"
-            static let code = -1
-            static let descriptionKey = "Unknown error"
+            static let domain: String = "AroundMe"
+            static let code: Int = -1
+            static let descriptionKey: String = "Unknown error"
         }
     }
 }
