@@ -9,9 +9,7 @@ import UIKit
 import Kingfisher
 
 final class PlaceTableViewCell: UITableViewCell {
-    
-    static let identifier = "PlaceTableViewCell"
-    
+    // MARK: - UI Components
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -23,9 +21,9 @@ final class PlaceTableViewCell: UITableViewCell {
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = Constants.Labels.Fonts.name
-        label.textColor = Constants.Labels.Colors.name
-        label.numberOfLines = Constants.Labels.numberOfLines
+        label.font = Constant.Label.Font.name
+        label.textColor = Constant.Label.Color.name
+        label.numberOfLines = Constant.Label.numberOfLines
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -33,9 +31,9 @@ final class PlaceTableViewCell: UITableViewCell {
     
     private let addressLabel: UILabel = {
         let label = UILabel()
-        label.font = Constants.Labels.Fonts.adress
-        label.textColor = Constants.Labels.Colors.adress
-        label.numberOfLines = Constants.Labels.numberOfLines
+        label.font = Constant.Label.Font.adress
+        label.textColor = Constant.Label.Color.adress
+        label.numberOfLines = Constant.Label.numberOfLines
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -43,9 +41,9 @@ final class PlaceTableViewCell: UITableViewCell {
     
     private let ratingLabel: UILabel = {
         let label = UILabel()
-        label.font = Constants.Labels.Fonts.rating
-        label.textColor = Constants.Labels.Colors.rating
-        label.numberOfLines = Constants.Labels.numberOfLines
+        label.font = Constant.Label.Font.rating
+        label.textColor = Constant.Label.Color.rating
+        label.numberOfLines = Constant.Label.numberOfLines
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -53,10 +51,10 @@ final class PlaceTableViewCell: UITableViewCell {
     
     private let distanceLabel: UILabel = {
         let label = UILabel()
-        label.font = Constants.Labels.Fonts.distance
-        label.textColor = Constants.Labels.Colors.distance
+        label.font = Constant.Label.Font.distance
+        label.textColor = Constant.Label.Color.distance
         label.textAlignment = .right
-        label.numberOfLines = Constants.Labels.numberOfLines
+        label.numberOfLines = Constant.Label.numberOfLines
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -74,7 +72,7 @@ final class PlaceTableViewCell: UITableViewCell {
     private lazy var labelsVStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, addressLabel, ratingAndDistanceHStackView])
         stackView.axis = .vertical
-        stackView.spacing = Constants.StackConstants.spacingForVStack
+        stackView.spacing = Constant.StackConstant.spacingForVStack
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
@@ -83,13 +81,14 @@ final class PlaceTableViewCell: UITableViewCell {
     private lazy var cellHStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [iconImageView, labelsVStackView])
         stackView.axis = .horizontal
-        stackView.spacing = Constants.StackConstants.spacingForHStack
+        stackView.spacing = Constant.StackConstant.spacingForHStack
         stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         return stackView
     }()
     
+    // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLayout()
@@ -99,30 +98,16 @@ final class PlaceTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup / Configuration
     func configure(with place: PlaceModel) {
         nameLabel.text = place.name
-        addressLabel.text = place.fullAddress.isEmpty ? Constants.Labels.EmptyText.adress : place.fullAddress
-        
-        if let rating = place.rating {
-            ratingLabel.text = "★ " + String(format: "%.1f", rating)
-        } else {
-            ratingLabel.text = Constants.Labels.EmptyText.rating
-        }
-        
-        if let distance = place.distance {
-            if distance < 1000 {
-                distanceLabel.text = String((Int(distance))) + " m"
-            } else {
-                let kilometers = distance / 1000.0
-                distanceLabel.text = String(format: "%.1f", kilometers) + " km"
-            }
-        } else {
-            distanceLabel.text = Constants.Labels.EmptyText.distance
-        }
+        addressLabel.text = place.fullAddress
+        ratingLabel.text = place.rating
+        distanceLabel.text = place.distance
         
         iconImageView.kf.setImage(
             with: place.iconURL,
-            placeholder: UIImage(systemName: Constants.iconImage.placeHolderSystemImage)
+            placeholder: UIImage(systemName: Constant.iconImage.placeHolderSystemImage)
         )
     }
     
@@ -130,51 +115,43 @@ final class PlaceTableViewCell: UITableViewCell {
         contentView.addSubview(cellHStackView)
         
         NSLayoutConstraint.activate([
-            
             cellHStackView.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
-                constant: Constants.StackConstants.Layout.verticalAnchor
+                constant: Constant.StackConstant.Layout.verticalAnchor
             ),
             cellHStackView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
-                constant: Constants.StackConstants.Layout.horizontalAnchor
+                constant: Constant.StackConstant.Layout.horizontalAnchor
             ),
             cellHStackView.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
-                constant: -Constants.StackConstants.Layout.horizontalAnchor
+                constant: -Constant.StackConstant.Layout.horizontalAnchor
             ),
             cellHStackView.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor,
-                constant: -Constants.StackConstants.Layout.verticalAnchor
+                constant: -Constant.StackConstant.Layout.verticalAnchor
             ),
             
-            iconImageView.widthAnchor.constraint(equalToConstant: Constants.iconImage.layoutSize),
-            iconImageView.heightAnchor.constraint(equalToConstant: Constants.iconImage.layoutSize)
+            iconImageView.widthAnchor.constraint(equalToConstant: Constant.iconImage.layoutSize),
+            iconImageView.heightAnchor.constraint(equalToConstant: Constant.iconImage.layoutSize)
         ])
     }
 }
 
+// MARK: - Constants
 private extension PlaceTableViewCell {
-    
-    enum Constants {
-        
-        enum Labels {
-            static let numberOfLines: Int = 0
+    enum Constant {
+        enum Label {
+            static let numberOfLines = 0
             
-            enum EmptyText {
-                static let adress: String = "Address not available"
-                static let rating: String = "Rating not available"
-                static let distance: String = "Distance not available"
-            }
-            
-            enum Fonts {
+            enum Font {
                 static let name: UIFont = .systemFont(ofSize: 16, weight: .bold)
                 static let adress: UIFont = .systemFont(ofSize: 14, weight: .regular)
                 static let rating: UIFont = .systemFont(ofSize: 14, weight: .semibold)
                 static let distance: UIFont = .systemFont(ofSize: 14, weight: .light)
             }
             
-            enum Colors {
+            enum Color {
                 static let name: UIColor = .label
                 static let adress: UIColor = .secondaryLabel
                 static let rating: UIColor = .systemOrange
@@ -182,7 +159,7 @@ private extension PlaceTableViewCell {
             }
         }
         
-        enum StackConstants {
+        enum StackConstant {
             static let spacingForVStack: CGFloat = 6.0
             static let spacingForHStack: CGFloat = spacingForVStack * 2
             
@@ -193,7 +170,7 @@ private extension PlaceTableViewCell {
         }
         
         enum iconImage {
-            static let placeHolderSystemImage: String = "arrow.down.circle.dotted"
+            static let placeHolderSystemImage = "arrow.down.circle.dotted"
             static let layoutSize: CGFloat = 40.0
         }
     }

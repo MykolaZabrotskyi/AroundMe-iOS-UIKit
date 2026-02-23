@@ -8,15 +8,15 @@
 import UIKit
 
 final class ListView: UIView {
-    
-    let tableView: UITableView = {
-        let table = UITableView()
-        table.estimatedRowHeight = Constants.rowHeight
-        table.rowHeight = UITableView.automaticDimension
-        table.register(PlaceTableViewCell.self, forCellReuseIdentifier: PlaceTableViewCell.identifier)
-        table.translatesAutoresizingMaskIntoConstraints = false
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.estimatedRowHeight = Constant.rowHeight
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.register(cell: PlaceTableViewCell.self)
+
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         
-        return table
+        return tableView
     }()
     
     override init(frame: CGRect) {
@@ -27,10 +27,14 @@ final class ListView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func setupTableView(delegate: UITableViewDelegate, dataSource: UITableViewDataSource) {
+        tableView.delegate = delegate
+        tableView.dataSource = dataSource
+    }
 }
 
 private extension ListView {
-    
     func setupLayout() {
         backgroundColor = .systemBackground
         addSubview(tableView)
@@ -45,8 +49,7 @@ private extension ListView {
 }
 
 private extension ListView {
-    
-    enum Constants {
-        static let rowHeight: CGFloat = 100
+    enum Constant {
+        static let rowHeight: CGFloat = 100.0
     }
 }

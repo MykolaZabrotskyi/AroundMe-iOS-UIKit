@@ -10,9 +10,13 @@ import GoogleMaps
 import GooglePlaces
 
 final class MapView: UIView {
+    // MARK: - Properties
+    var onListButtonTapped: (() -> Void)?
+    var onLocationButtonTapped: (() -> Void)?
     
     private var displayedMarkers: [GMSMarker] = []
     
+    // MARK: - UI Components
     private let mapView: GMSMapView = {
         let options = GMSMapViewOptions()
         options.backgroundColor = .systemBackground
@@ -28,9 +32,9 @@ final class MapView: UIView {
     
     private lazy var listButton: UIButton = {
         var configuration = UIButton.Configuration.glass()
-        configuration.image = UIImage(systemName: Constants.Buttons.SystemImages.list)
+        configuration.image = UIImage(systemName: Constant.Button.SystemImages.list)
         configuration.imagePlacement = .all
-        configuration.preferredSymbolConfigurationForImage = Constants.Buttons.systemImageConfig
+        configuration.preferredSymbolConfigurationForImage = Constant.Button.systemImageConfig
         
         let button = UIButton(configuration: configuration)
         button.addTarget(self, action: #selector(listButtonTapped), for: .touchUpInside)
@@ -39,13 +43,11 @@ final class MapView: UIView {
         return button
     }()
     
-    var onListButtonTapped: (() -> Void)?
-    
     private lazy var locationButton: UIButton = {
         var configuration = UIButton.Configuration.glass()
-        configuration.image = UIImage(systemName: Constants.Buttons.SystemImages.location)
+        configuration.image = UIImage(systemName: Constant.Button.SystemImages.location)
         configuration.imagePlacement = .all
-        configuration.preferredSymbolConfigurationForImage = Constants.Buttons.systemImageConfig
+        configuration.preferredSymbolConfigurationForImage = Constant.Button.systemImageConfig
         
         let button = UIButton(configuration: configuration)
         button.addTarget(self, action: #selector(locationButtonTapped), for: .touchUpInside)
@@ -54,12 +56,10 @@ final class MapView: UIView {
         return button
     }()
     
-    var onLocationButtonTapped: (() -> Void)?
-    
     private lazy var buttonsVStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [listButton, locationButton])
         stackView.axis = .vertical
-        stackView.spacing = Constants.Buttons.spaceBetweenButtons
+        stackView.spacing = Constant.Button.spaceBetweenButtons
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -67,6 +67,7 @@ final class MapView: UIView {
         return stackView
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -78,25 +79,26 @@ final class MapView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
     func updateMyLocationEnabled(_ enabled: Bool) {
         mapView.isMyLocationEnabled = enabled
     }
     
     func moveCameraToUser(_ location: CLLocationCoordinate2D) {
-        let camera = GMSCameraPosition.camera(withTarget: location, zoom: Constants.zoomCameraOnUser)
+        let camera = GMSCameraPosition.camera(withTarget: location, zoom: Constant.zoomCameraOnUser)
         mapView.animate(to: camera)
     }
     
     func moveCameraToPlace(_ location: CLLocationCoordinate2D) {
         guard let userCoordinate = mapView.myLocation?.coordinate else {
-            let camera = GMSCameraPosition.camera(withTarget: location, zoom: Constants.zoomCameraOnUser)
+            let camera = GMSCameraPosition.camera(withTarget: location, zoom: Constant.zoomCameraOnUser)
             mapView.animate(to: camera)
             return
         }
         
         let bounds = GMSCoordinateBounds(coordinate: userCoordinate, coordinate: location)
         
-        let update = GMSCameraUpdate.fit(bounds, withPadding: Constants.cameraPadding)
+        let update = GMSCameraUpdate.fit(bounds, withPadding: Constant.cameraPadding)
         mapView.animate(with: update)
     }
     
@@ -125,8 +127,9 @@ final class MapView: UIView {
     }
 }
 
+// MARK: - Private Methods
 private extension MapView {
-    
+    // MARK: - Actions
     @objc func locationButtonTapped() {
         if let coordinate = mapView.myLocation?.coordinate {
             moveCameraToUser(coordinate)
@@ -139,6 +142,7 @@ private extension MapView {
         onListButtonTapped?()
     }
     
+    // MARK: - Setup / Configuration
     func setupLayout() {
         mapView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -151,13 +155,13 @@ private extension MapView {
             mapView.trailingAnchor.constraint(equalTo: trailingAnchor),
             mapView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            buttonsVStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Constants.Buttons.layoutPadding),
-            buttonsVStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: Constants.Buttons.layoutPadding),
-            buttonsVStackView.widthAnchor.constraint(equalToConstant: Constants.Buttons.sizeOfButtons),
+            buttonsVStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Constant.Button.layoutPadding),
+            buttonsVStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: Constant.Button.layoutPadding),
+            buttonsVStackView.widthAnchor.constraint(equalToConstant: Constant.Button.sizeOfButtons),
             
-            listButton.heightAnchor.constraint(equalToConstant: Constants.Buttons.sizeOfButtons),
+            listButton.heightAnchor.constraint(equalToConstant: Constant.Button.sizeOfButtons),
             
-            locationButton.heightAnchor.constraint(equalToConstant: Constants.Buttons.sizeOfButtons)
+            locationButton.heightAnchor.constraint(equalToConstant: Constant.Button.sizeOfButtons)
         ])
     }
     
@@ -176,13 +180,13 @@ private extension MapView {
     }
 }
 
+// MARK: - Constants 
 private extension MapView {
-    
-    enum Constants {
+    enum Constant {
         static let zoomCameraOnUser: Float = 16.0
         static let cameraPadding: CGFloat = 150.0
         
-        enum Buttons {
+        enum Button {
             static let systemImageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
             static let spaceBetweenButtons: CGFloat = 16.0
             static let sizeOfButtons: CGFloat = 70.0

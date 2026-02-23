@@ -12,6 +12,6 @@ struct PlaceModel {
     let coordinate: CLLocationCoordinate2D
     let fullAddress: String
     let iconURL: URL?
-    let rating: Float?
-    let distance: CLLocationDistance?
+    let rating: String?
+    let distance: String?
 }

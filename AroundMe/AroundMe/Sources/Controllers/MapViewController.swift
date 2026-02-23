@@ -11,7 +11,7 @@ import GooglePlaces
 import CoreLocation
 
 final class MapViewController: UIViewController {
-    
+    // MARK: - Properties
     private let mainView = MapView()
     
     private let locationManager = CLLocationManager()
@@ -19,6 +19,7 @@ final class MapViewController: UIViewController {
     
     private var fetchedPlaces: [PlaceModel] = []
     
+    // MARK: - Lifecycle
     override func loadView() {
         view = mainView
     }
@@ -48,55 +49,12 @@ final class MapViewController: UIViewController {
     }
 }
 
-extension MapViewController: CLLocationManagerDelegate {
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        handleAuthorizationStatus(manager.authorizationStatus)
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else {
-            return
-        }
-        
-        locationManager.stopUpdatingLocation()
-        
-        mainView.moveCameraToUser(location.coordinate)
-        
-        placesService.searchNearby(at: location.coordinate) { [weak self] result in
-            switch result {
-                
-            case .success(let places):
-                self?.fetchedPlaces = places
-                self?.mainView.renderMarkers(for: places)
-                
-            case .failure(let error):
-                self?.showAlert(
-                    title: Constants.Alerts.Titles.placeServiceFailure,
-                    message: error.localizedDescription
-                )
-            }
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        if let clError = error as? CLError, clError.code == .locationUnknown {
-            return
-        }
-        
-        showAlert(
-            title: Constants.Alerts.Titles.locationManagerFailure,
-            message: error.localizedDescription
-        )
-    }
-}
-
+// MARK: - Private Methods
 private extension MapViewController {
-    
     func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        let okAction = UIAlertAction(title: Constants.Alerts.Action.title, style: .default)
+        let okAction = UIAlertAction(title: Constant.Alert.Action.title, style: .default)
         alert.addAction(okAction)
         
         self.present(alert, animated: true)
@@ -120,8 +78,8 @@ private extension MapViewController {
             
         case .denied, .restricted:
             showAlert(
-                title: Constants.Alerts.Titles.authorizationDenied,
-                message: Constants.Alerts.Messages.authorizationDenied
+                title: Constant.Alert.Title.authorizationDenied,
+                message: Constant.Alert.Message.authorizationDenied
             )
             
         default: break
@@ -129,23 +87,64 @@ private extension MapViewController {
     }
 }
 
-private extension MapViewController {
+// MARK: - CLLocationManagerDelegate
+extension MapViewController: CLLocationManagerDelegate {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        handleAuthorizationStatus(manager.authorizationStatus)
+    }
     
-    enum Constants {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else {
+            return
+        }
         
-        enum Alerts {
-            
+        locationManager.stopUpdatingLocation()
+        
+        mainView.moveCameraToUser(location.coordinate)
+        
+        placesService.searchNearby(at: location.coordinate) { [weak self] result in
+            switch result {
+                
+            case .success(let places):
+                self?.fetchedPlaces = places
+                self?.mainView.renderMarkers(for: places)
+                
+            case .failure(let error):
+                self?.showAlert(
+                    title: Constant.Alert.Title.placeServiceFailure,
+                    message: error.localizedDescription
+                )
+            }
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        if let clError = error as? CLError, clError.code == .locationUnknown {
+            return
+        }
+        
+        showAlert(
+            title: Constant.Alert.Title.locationManagerFailure,
+            message: error.localizedDescription
+        )
+    }
+}
+
+// MARK: - Constants
+private extension MapViewController {
+    enum Constant {
+        enum Alert {
             enum Action {
                 static let title: String = "OK"
             }
             
-            enum Titles {
+            enum Title {
                 static let placeServiceFailure: String = "Couldn't find places nearby"
                 static let locationManagerFailure: String = "An error occurred related to geolocation"
                 static let authorizationDenied: String = "Access to geolocation is restricted"
             }
             
-            enum Messages {
+            enum Message {
                 static let authorizationDenied: String = "To allow the app to find places around you, allow location access in settings."
             }
         }

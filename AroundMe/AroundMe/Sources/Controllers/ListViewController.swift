@@ -9,10 +9,13 @@ import UIKit
 import CoreLocation
 
 final class ListViewController: UIViewController {
+    // MARK: - Properties
+    var onPlaceSelected: ((CLLocationCoordinate2D) -> Void)?
     
     private let mainView = ListView()
     private let places: [PlaceModel]
     
+    // MARK: - Init
     init(places: [PlaceModel]) {
         self.places = places
         super.init(nibName: nil, bundle: nil)
@@ -22,6 +25,7 @@ final class ListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
     override func loadView() {
         view = mainView
     }
@@ -29,28 +33,20 @@ final class ListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = Constants.title
+        title = Constant.title
         
-        mainView.tableView.delegate = self
-        mainView.tableView.dataSource = self
+        mainView.setupTableView(delegate: self, dataSource: self)
     }
-    
-    var onPlaceSelected: ((CLLocationCoordinate2D) -> Void)?
 }
 
+// MARK: - UITableVIewDelegate
 extension ListViewController: UITableViewDataSource, UITableViewDelegate {
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return places.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: PlaceTableViewCell.identifier,
-            for: indexPath
-        ) as? PlaceTableViewCell else {
-            return UITableViewCell()
-        }
+        let cell: PlaceTableViewCell = tableView.dequeue(for: indexPath)
         
         let place = places[indexPath.row]
         cell.configure(with: place)
@@ -65,9 +61,9 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: - Constants
 private extension ListViewController {
-    
-    enum Constants {
+    enum Constant {
         static let title: String = "List"
     }
 }

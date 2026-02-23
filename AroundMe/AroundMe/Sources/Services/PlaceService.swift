@@ -9,9 +9,9 @@ import CoreLocation
 import GooglePlaces
 
 final class PlacesService {
-    
+    // MARK: - Public Methods
     func searchNearby(at location: CLLocationCoordinate2D, completion: @escaping (Result<[PlaceModel], Error>) -> Void) {
-        let circularRestriction = GMSPlaceCircularLocationOption(location, Constants.searchRadius)
+        let circularRestriction = GMSPlaceCircularLocationOption(location, Constant.searchRadius)
         let properties = [
             GMSPlaceProperty.name,
             GMSPlaceProperty.coordinate,
@@ -24,15 +24,15 @@ final class PlacesService {
             locationRestriction: circularRestriction,
             placeProperties: properties
         )
-        request.includedTypes = Constants.includedPlaceTypes
+        request.includedTypes = Constant.includedPlaceTypes
         
         GMSPlacesClient.shared().searchNearby(with: request) { results, error in
             guard let results, error == nil else {
                 let errorToReturn = error ??
                 NSError(
-                    domain: Constants.ErrorConstants.domain,
-                    code: Constants.ErrorConstants.code,
-                    userInfo: [NSLocalizedDescriptionKey: Constants.ErrorConstants.descriptionKey]
+                    domain: Constant.ErrorConstant.domain,
+                    code: Constant.ErrorConstant.code,
+                    userInfo: [NSLocalizedDescriptionKey: Constant.ErrorConstant.descriptionKey]
                 )
                 
                 DispatchQueue.main.async {
@@ -50,21 +50,41 @@ final class PlacesService {
                     longitude: gmsPlace.coordinate.longitude
                 )
                 
+                let formattedRating: String
+                if gmsPlace.rating > 0 {
+                    formattedRating = "★ " + String(format: "%.1f", gmsPlace.rating)
+                } else {
+                    formattedRating = Constant.EmptyText.rating
+                }
+                
                 let distanceToPlace = userLocation.distance(from: placeLocation)
                 
+                let formattedDistance: String
+                if distanceToPlace < 1000 {
+                    formattedDistance = String(Int(distanceToPlace)) + " m"
+                } else {
+                    let kilometers = distanceToPlace / 1000.0
+                    formattedDistance = String(format: "%.1f", kilometers) + " km"
+                }
+                
                 return PlaceModel(
-                    name: gmsPlace.name ?? "",
+                    name: gmsPlace.name ?? Constant.EmptyText.name,
                     coordinate: gmsPlace.coordinate,
                     fullAddress: PlacesService.formatAddress(gmsPlace.addressComponents),
                     iconURL: gmsPlace.iconImageURL,
-                    rating: gmsPlace.rating > 0 ? gmsPlace.rating : nil,
-                    distance: distanceToPlace
+                    rating: formattedRating,
+                    distance: formattedDistance
                 )
             }
             
             let sortedPlaces: [PlaceModel] = places.sorted(by: { firstPlace, secondPlace in
-                let firstDistance = firstPlace.distance ?? 0
-                let secondDistance = secondPlace.distance ?? 0
+                guard let firstDistance = Int(firstPlace.distance ?? "") else {
+                    return false
+                }
+                
+                guard let secondDistance = Int(secondPlace.distance ?? "") else {
+                    return false
+                }
                 
                 return firstDistance < secondDistance
             })
@@ -76,11 +96,11 @@ final class PlacesService {
     }
 }
 
+// MARK: - Private Methods
 private extension PlacesService {
-    
     static func formatAddress(_ components: [GMSAddressComponent]?) -> String {
         guard let components else {
-            return ""
+            return Constant.EmptyText.adress
         }
         
         let country = components.first(where: { $0.types.contains("country") })?.name ?? ""
@@ -92,16 +112,23 @@ private extension PlacesService {
     }
 }
 
+// MARK: - Constants
 private extension PlacesService {
-    
-    enum Constants {
+    enum Constant {
         static let searchRadius: Double = 5000.0
-        static let includedPlaceTypes: [String] = ["restaurant", "cafe"]
+        static let includedPlaceTypes = ["restaurant", "cafe"]
         
-        enum ErrorConstants {
-            static let domain: String = "AroundMe"
-            static let code: Int = -1
-            static let descriptionKey: String = "Unknown error"
+        enum ErrorConstant {
+            static let domain = "AroundMe"
+            static let code = -1
+            static let descriptionKey = "Unknown error"
+        }
+        
+        enum EmptyText {
+            static let adress = "Address not available"
+            static let rating = "Rating not available"
+            static let distance = "Distance not available"
+            static let name = "Name not available"
         }
     }
 }
