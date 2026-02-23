@@ -40,7 +40,8 @@ final class MapViewController: UIViewController {
             self.navigationController?.pushViewController(listVC, animated: true)
             
             listVC.onPlaceSelected = { [weak self] coordinate in
-                self?.mainView.moveCameraToUser(coordinate)
+                self?.mainView.moveCameraToPlace(coordinate)
+                self?.mainView.openMarkerSnippet(at: coordinate)
                 self?.navigationController?.popViewController(animated: true)
             }
         }

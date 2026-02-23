@@ -51,8 +51,28 @@ final class PlaceTableViewCell: UITableViewCell {
         return label
     }()
     
+    private let distanceLabel: UILabel = {
+        let label = UILabel()
+        label.font = Constants.Labels.Fonts.distance
+        label.textColor = Constants.Labels.Colors.distance
+        label.textAlignment = .right
+        label.numberOfLines = Constants.Labels.numberOfLines
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    private lazy var ratingAndDistanceHStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [ratingLabel, distanceLabel])
+        stackView.axis = .horizontal
+        stackView.distribution = .equalSpacing
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
+    }()
+    
     private lazy var labelsVStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [nameLabel, addressLabel, ratingLabel])
+        let stackView = UIStackView(arrangedSubviews: [nameLabel, addressLabel, ratingAndDistanceHStackView])
         stackView.axis = .vertical
         stackView.spacing = Constants.StackConstants.spacingForVStack
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -84,9 +104,20 @@ final class PlaceTableViewCell: UITableViewCell {
         addressLabel.text = place.fullAddress.isEmpty ? Constants.Labels.EmptyText.adress : place.fullAddress
         
         if let rating = place.rating {
-            ratingLabel.text = "★ \(String(format: "%.1f", rating))"
+            ratingLabel.text = "★ " + String(format: "%.1f", rating)
         } else {
             ratingLabel.text = Constants.Labels.EmptyText.rating
+        }
+        
+        if let distance = place.distance {
+            if distance < 1000 {
+                distanceLabel.text = String((Int(distance))) + " m"
+            } else {
+                let kilometers = distance / 1000.0
+                distanceLabel.text = String(format: "%.1f", kilometers) + " km"
+            }
+        } else {
+            distanceLabel.text = Constants.Labels.EmptyText.distance
         }
         
         iconImageView.kf.setImage(
@@ -99,6 +130,7 @@ final class PlaceTableViewCell: UITableViewCell {
         contentView.addSubview(cellHStackView)
         
         NSLayoutConstraint.activate([
+            
             cellHStackView.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
                 constant: Constants.StackConstants.Layout.verticalAnchor
@@ -131,19 +163,22 @@ private extension PlaceTableViewCell {
             
             enum EmptyText {
                 static let adress: String = "Address not available"
-                static let rating: String = "No rating"
+                static let rating: String = "Rating not available"
+                static let distance: String = "Distance not available"
             }
             
             enum Fonts {
                 static let name: UIFont = .systemFont(ofSize: 16, weight: .bold)
                 static let adress: UIFont = .systemFont(ofSize: 14, weight: .regular)
                 static let rating: UIFont = .systemFont(ofSize: 14, weight: .semibold)
+                static let distance: UIFont = .systemFont(ofSize: 14, weight: .light)
             }
             
             enum Colors {
                 static let name: UIColor = .label
                 static let adress: UIColor = .secondaryLabel
                 static let rating: UIColor = .systemOrange
+                static let distance: UIColor = .lightGray
             }
         }
         

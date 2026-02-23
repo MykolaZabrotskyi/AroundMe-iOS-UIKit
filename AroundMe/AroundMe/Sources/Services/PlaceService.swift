@@ -20,7 +20,10 @@ final class PlacesService {
             GMSPlaceProperty.rating
         ].map { $0.rawValue }
         
-        let request = GMSPlaceSearchNearbyRequest(locationRestriction: circularRestriction, placeProperties: properties)
+        let request = GMSPlaceSearchNearbyRequest(
+            locationRestriction: circularRestriction,
+            placeProperties: properties
+        )
         request.includedTypes = Constants.includedPlaceTypes
         
         GMSPlacesClient.shared().searchNearby(with: request) { results, error in
@@ -39,18 +42,35 @@ final class PlacesService {
                 return
             }
             
-            let places = results.map { gmsPlace in
-                PlaceModel(
+            let userLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+            
+            let places: [PlaceModel] = results.map { gmsPlace in
+                let placeLocation = CLLocation(
+                    latitude: gmsPlace.coordinate.latitude,
+                    longitude: gmsPlace.coordinate.longitude
+                )
+                
+                let distanceToPlace = userLocation.distance(from: placeLocation)
+                
+                return PlaceModel(
                     name: gmsPlace.name ?? "",
                     coordinate: gmsPlace.coordinate,
                     fullAddress: PlacesService.formatAddress(gmsPlace.addressComponents),
                     iconURL: gmsPlace.iconImageURL,
-                    rating: gmsPlace.rating > 0 ? gmsPlace.rating : nil
+                    rating: gmsPlace.rating > 0 ? gmsPlace.rating : nil,
+                    distance: distanceToPlace
                 )
             }
             
+            let sortedPlaces: [PlaceModel] = places.sorted(by: { firstPlace, secondPlace in
+                let firstDistance = firstPlace.distance ?? 0
+                let secondDistance = secondPlace.distance ?? 0
+                
+                return firstDistance < secondDistance
+            })
+            
             DispatchQueue.main.async {
-                completion(.success(places))
+                completion(.success(sortedPlaces))
             }
         }
     }

@@ -11,6 +11,8 @@ import GooglePlaces
 
 final class MapView: UIView {
     
+    private var displayedMarkers: [GMSMarker] = []
+    
     private let mapView: GMSMapView = {
         let options = GMSMapViewOptions()
         options.backgroundColor = .systemBackground
@@ -85,8 +87,31 @@ final class MapView: UIView {
         mapView.animate(to: camera)
     }
     
+    func moveCameraToPlace(_ location: CLLocationCoordinate2D) {
+        guard let userCoordinate = mapView.myLocation?.coordinate else {
+            let camera = GMSCameraPosition.camera(withTarget: location, zoom: Constants.zoomCameraOnUser)
+            mapView.animate(to: camera)
+            return
+        }
+        
+        let bounds = GMSCoordinateBounds(coordinate: userCoordinate, coordinate: location)
+        
+        let update = GMSCameraUpdate.fit(bounds, withPadding: Constants.cameraPadding)
+        mapView.animate(with: update)
+    }
+    
+    func openMarkerSnippet(at location: CLLocationCoordinate2D) {
+        let markerToSelect = displayedMarkers.first { marker in
+            marker.position.latitude == location.latitude &&
+            marker.position.longitude == location.longitude
+        }
+        
+        mapView.selectedMarker = markerToSelect
+    }
+    
     func renderMarkers(for places: [PlaceModel]) {
         mapView.clear()
+        displayedMarkers.removeAll()
         
         for place in places {
             let marker = GMSMarker(position: place.coordinate)
@@ -94,6 +119,8 @@ final class MapView: UIView {
             marker.snippet = place.fullAddress
             marker.appearAnimation = .pop
             marker.map = mapView
+            
+            displayedMarkers.append(marker)
         }
     }
 }
@@ -153,6 +180,7 @@ private extension MapView {
     
     enum Constants {
         static let zoomCameraOnUser: Float = 16.0
+        static let cameraPadding: CGFloat = 150.0
         
         enum Buttons {
             static let systemImageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
