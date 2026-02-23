@@ -10,12 +10,14 @@ import CoreLocation
 
 final class ListViewController: UIViewController {
     // MARK: - Properties
+    
     var onPlaceSelected: ((CLLocationCoordinate2D) -> Void)?
     
     private let mainView = ListView()
     private let places: [PlaceModel]
     
     // MARK: - Init
+    
     init(places: [PlaceModel]) {
         self.places = places
         super.init(nibName: nil, bundle: nil)
@@ -26,6 +28,7 @@ final class ListViewController: UIViewController {
     }
     
     // MARK: - Lifecycle
+    
     override func loadView() {
         view = mainView
     }
@@ -40,6 +43,7 @@ final class ListViewController: UIViewController {
 }
 
 // MARK: - UITableVIewDelegate
+
 extension ListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return places.count
@@ -62,8 +66,9 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 // MARK: - Constants
+
 private extension ListViewController {
     enum Constant {
-        static let title: String = "List"
+        static let title = "List"
     }
 }

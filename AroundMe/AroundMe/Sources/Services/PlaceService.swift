@@ -9,7 +9,8 @@ import CoreLocation
 import GooglePlaces
 
 final class PlacesService {
-    // MARK: - Public Methods
+    // MARK: - Internal Methods
+    
     func searchNearby(at location: CLLocationCoordinate2D, completion: @escaping (Result<[PlaceModel], Error>) -> Void) {
         let circularRestriction = GMSPlaceCircularLocationOption(location, Constant.searchRadius)
         let properties = [
@@ -97,6 +98,7 @@ final class PlacesService {
 }
 
 // MARK: - Private Methods
+
 private extension PlacesService {
     static func formatAddress(_ components: [GMSAddressComponent]?) -> String {
         guard let components else {
@@ -113,6 +115,7 @@ private extension PlacesService {
 }
 
 // MARK: - Constants
+
 private extension PlacesService {
     enum Constant {
         static let searchRadius: Double = 5000.0

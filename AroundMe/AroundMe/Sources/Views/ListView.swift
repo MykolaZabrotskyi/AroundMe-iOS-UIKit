@@ -8,6 +8,8 @@
 import UIKit
 
 final class ListView: UIView {
+    // MARK: - UI Components
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.estimatedRowHeight = Constant.rowHeight
@@ -19,6 +21,8 @@ final class ListView: UIView {
         return tableView
     }()
     
+    // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
@@ -28,13 +32,19 @@ final class ListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Internal Methods
+    
     func setupTableView(delegate: UITableViewDelegate, dataSource: UITableViewDataSource) {
         tableView.delegate = delegate
         tableView.dataSource = dataSource
     }
 }
 
+// MARK: - Private Methods
+
 private extension ListView {
+    // MARK: - Setup / Configuration
+    
     func setupLayout() {
         backgroundColor = .systemBackground
         addSubview(tableView)
@@ -47,6 +57,8 @@ private extension ListView {
         ])
     }
 }
+
+// MARK: - Constants
 
 private extension ListView {
     enum Constant {

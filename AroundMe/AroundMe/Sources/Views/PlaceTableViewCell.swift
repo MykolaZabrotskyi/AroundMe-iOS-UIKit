@@ -10,6 +10,7 @@ import Kingfisher
 
 final class PlaceTableViewCell: UITableViewCell {
     // MARK: - UI Components
+    
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -60,7 +61,7 @@ final class PlaceTableViewCell: UITableViewCell {
         return label
     }()
     
-    private lazy var ratingAndDistanceHStackView: UIStackView = {
+    private lazy var ratingAndDistanceHorizontalStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [ratingLabel, distanceLabel])
         stackView.axis = .horizontal
         stackView.distribution = .equalSpacing
@@ -69,8 +70,12 @@ final class PlaceTableViewCell: UITableViewCell {
         return stackView
     }()
     
-    private lazy var labelsVStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [nameLabel, addressLabel, ratingAndDistanceHStackView])
+    private lazy var labelsVerticalStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            nameLabel,
+            addressLabel,
+            ratingAndDistanceHorizontalStackView
+        ])
         stackView.axis = .vertical
         stackView.spacing = Constant.StackConstant.spacingForVStack
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -78,8 +83,11 @@ final class PlaceTableViewCell: UITableViewCell {
         return stackView
     }()
     
-    private lazy var cellHStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [iconImageView, labelsVStackView])
+    private lazy var cellHorizontalStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            iconImageView,
+            labelsVerticalStackView
+        ])
         stackView.axis = .horizontal
         stackView.spacing = Constant.StackConstant.spacingForHStack
         stackView.alignment = .center
@@ -89,6 +97,7 @@ final class PlaceTableViewCell: UITableViewCell {
     }()
     
     // MARK: - Init
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupLayout()
@@ -99,6 +108,7 @@ final class PlaceTableViewCell: UITableViewCell {
     }
     
     // MARK: - Setup / Configuration
+    
     func configure(with place: PlaceModel) {
         nameLabel.text = place.name
         addressLabel.text = place.fullAddress
@@ -112,22 +122,22 @@ final class PlaceTableViewCell: UITableViewCell {
     }
     
     private func setupLayout() {
-        contentView.addSubview(cellHStackView)
+        contentView.addSubview(cellHorizontalStackView)
         
         NSLayoutConstraint.activate([
-            cellHStackView.topAnchor.constraint(
+            cellHorizontalStackView.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
                 constant: Constant.StackConstant.Layout.verticalAnchor
             ),
-            cellHStackView.leadingAnchor.constraint(
+            cellHorizontalStackView.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
                 constant: Constant.StackConstant.Layout.horizontalAnchor
             ),
-            cellHStackView.trailingAnchor.constraint(
+            cellHorizontalStackView.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
                 constant: -Constant.StackConstant.Layout.horizontalAnchor
             ),
-            cellHStackView.bottomAnchor.constraint(
+            cellHorizontalStackView.bottomAnchor.constraint(
                 equalTo: contentView.bottomAnchor,
                 constant: -Constant.StackConstant.Layout.verticalAnchor
             ),
@@ -139,6 +149,7 @@ final class PlaceTableViewCell: UITableViewCell {
 }
 
 // MARK: - Constants
+
 private extension PlaceTableViewCell {
     enum Constant {
         enum Label {

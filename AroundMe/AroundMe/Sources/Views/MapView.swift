@@ -11,12 +11,14 @@ import GooglePlaces
 
 final class MapView: UIView {
     // MARK: - Properties
+    
     var onListButtonTapped: (() -> Void)?
     var onLocationButtonTapped: (() -> Void)?
     
     private var displayedMarkers: [GMSMarker] = []
     
     // MARK: - UI Components
+    
     private let mapView: GMSMapView = {
         let options = GMSMapViewOptions()
         options.backgroundColor = .systemBackground
@@ -56,7 +58,7 @@ final class MapView: UIView {
         return button
     }()
     
-    private lazy var buttonsVStackView: UIStackView = {
+    private lazy var buttonsVerticalStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [listButton, locationButton])
         stackView.axis = .vertical
         stackView.spacing = Constant.Button.spaceBetweenButtons
@@ -68,6 +70,7 @@ final class MapView: UIView {
     }()
     
     // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -79,7 +82,8 @@ final class MapView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Public Methods
+    // MARK: - Internal Methods
+    
     func updateMyLocationEnabled(_ enabled: Bool) {
         mapView.isMyLocationEnabled = enabled
     }
@@ -128,8 +132,10 @@ final class MapView: UIView {
 }
 
 // MARK: - Private Methods
+
 private extension MapView {
     // MARK: - Actions
+    
     @objc func locationButtonTapped() {
         if let coordinate = mapView.myLocation?.coordinate {
             moveCameraToUser(coordinate)
@@ -143,11 +149,12 @@ private extension MapView {
     }
     
     // MARK: - Setup / Configuration
+    
     func setupLayout() {
         mapView.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(mapView)
-        addSubview(buttonsVStackView)
+        addSubview(buttonsVerticalStackView)
         
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: topAnchor),
@@ -155,9 +162,9 @@ private extension MapView {
             mapView.trailingAnchor.constraint(equalTo: trailingAnchor),
             mapView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            buttonsVStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Constant.Button.layoutPadding),
-            buttonsVStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: Constant.Button.layoutPadding),
-            buttonsVStackView.widthAnchor.constraint(equalToConstant: Constant.Button.sizeOfButtons),
+            buttonsVerticalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Constant.Button.layoutPadding),
+            buttonsVerticalStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: Constant.Button.layoutPadding),
+            buttonsVerticalStackView.widthAnchor.constraint(equalToConstant: Constant.Button.sizeOfButtons),
             
             listButton.heightAnchor.constraint(equalToConstant: Constant.Button.sizeOfButtons),
             
@@ -180,7 +187,8 @@ private extension MapView {
     }
 }
 
-// MARK: - Constants 
+// MARK: - Constants
+
 private extension MapView {
     enum Constant {
         static let zoomCameraOnUser: Float = 16.0

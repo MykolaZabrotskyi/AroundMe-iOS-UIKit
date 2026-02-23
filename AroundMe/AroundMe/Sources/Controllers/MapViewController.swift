@@ -12,6 +12,7 @@ import CoreLocation
 
 final class MapViewController: UIViewController {
     // MARK: - Properties
+    
     private let mainView = MapView()
     
     private let locationManager = CLLocationManager()
@@ -20,6 +21,7 @@ final class MapViewController: UIViewController {
     private var fetchedPlaces: [PlaceModel] = []
     
     // MARK: - Lifecycle
+    
     override func loadView() {
         view = mainView
     }
@@ -37,10 +39,10 @@ final class MapViewController: UIViewController {
                 return
             }
             
-            let listVC = ListViewController(places: self.fetchedPlaces)
-            self.navigationController?.pushViewController(listVC, animated: true)
+            let ListViewController = ListViewController(places: self.fetchedPlaces)
+            self.navigationController?.pushViewController(ListViewController, animated: true)
             
-            listVC.onPlaceSelected = { [weak self] coordinate in
+            ListViewController.onPlaceSelected = { [weak self] coordinate in
                 self?.mainView.moveCameraToPlace(coordinate)
                 self?.mainView.openMarkerSnippet(at: coordinate)
                 self?.navigationController?.popViewController(animated: true)
@@ -50,6 +52,7 @@ final class MapViewController: UIViewController {
 }
 
 // MARK: - Private Methods
+
 private extension MapViewController {
     func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -88,6 +91,7 @@ private extension MapViewController {
 }
 
 // MARK: - CLLocationManagerDelegate
+
 extension MapViewController: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         handleAuthorizationStatus(manager.authorizationStatus)
@@ -104,7 +108,6 @@ extension MapViewController: CLLocationManagerDelegate {
         
         placesService.searchNearby(at: location.coordinate) { [weak self] result in
             switch result {
-                
             case .success(let places):
                 self?.fetchedPlaces = places
                 self?.mainView.renderMarkers(for: places)
@@ -131,21 +134,22 @@ extension MapViewController: CLLocationManagerDelegate {
 }
 
 // MARK: - Constants
+
 private extension MapViewController {
     enum Constant {
         enum Alert {
             enum Action {
-                static let title: String = "OK"
+                static let title = "OK"
             }
             
             enum Title {
-                static let placeServiceFailure: String = "Couldn't find places nearby"
-                static let locationManagerFailure: String = "An error occurred related to geolocation"
-                static let authorizationDenied: String = "Access to geolocation is restricted"
+                static let placeServiceFailure = "Couldn't find places nearby"
+                static let locationManagerFailure = "An error occurred related to geolocation"
+                static let authorizationDenied = "Access to geolocation is restricted"
             }
             
             enum Message {
-                static let authorizationDenied: String = "To allow the app to find places around you, allow location access in settings."
+                static let authorizationDenied = "To allow the app to find places around you, allow location access in settings."
             }
         }
     }
