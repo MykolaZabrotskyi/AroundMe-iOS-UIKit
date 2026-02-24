@@ -10,6 +10,7 @@ import GoogleMaps
 import GooglePlaces
 
 final class MapView: UIView {
+    
     // MARK: - Properties
     
     var onListButtonTapped: (() -> Void)?
@@ -134,6 +135,7 @@ final class MapView: UIView {
 // MARK: - Private Methods
 
 private extension MapView {
+    
     // MARK: - Actions
     
     @objc func locationButtonTapped() {

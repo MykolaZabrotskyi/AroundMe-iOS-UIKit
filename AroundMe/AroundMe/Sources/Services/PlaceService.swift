@@ -9,6 +9,7 @@ import CoreLocation
 import GooglePlaces
 
 final class PlacesService {
+    
     // MARK: - Internal Methods
     
     func searchNearby(at location: CLLocationCoordinate2D, completion: @escaping (Result<[PlaceModel], Error>) -> Void) {
@@ -51,41 +52,21 @@ final class PlacesService {
                     longitude: gmsPlace.coordinate.longitude
                 )
                 
-                let formattedRating: String
-                if gmsPlace.rating > 0 {
-                    formattedRating = "★ " + String(format: "%.1f", gmsPlace.rating)
-                } else {
-                    formattedRating = Constant.EmptyText.rating
-                }
-                
                 let distanceToPlace = userLocation.distance(from: placeLocation)
-                
-                let formattedDistance: String
-                if distanceToPlace < 1000 {
-                    formattedDistance = String(Int(distanceToPlace)) + " m"
-                } else {
-                    let kilometers = distanceToPlace / 1000.0
-                    formattedDistance = String(format: "%.1f", kilometers) + " km"
-                }
                 
                 return PlaceModel(
                     name: gmsPlace.name ?? Constant.EmptyText.name,
                     coordinate: gmsPlace.coordinate,
                     fullAddress: PlacesService.formatAddress(gmsPlace.addressComponents),
                     iconURL: gmsPlace.iconImageURL,
-                    rating: formattedRating,
-                    distance: formattedDistance
+                    rating: gmsPlace.rating,
+                    distance: distanceToPlace
                 )
             }
             
             let sortedPlaces: [PlaceModel] = places.sorted(by: { firstPlace, secondPlace in
-                guard let firstDistance = Int(firstPlace.distance ?? "") else {
-                    return false
-                }
-                
-                guard let secondDistance = Int(secondPlace.distance ?? "") else {
-                    return false
-                }
+                let firstDistance = firstPlace.distance ?? 0
+                let secondDistance = secondPlace.distance ?? 0
                 
                 return firstDistance < secondDistance
             })

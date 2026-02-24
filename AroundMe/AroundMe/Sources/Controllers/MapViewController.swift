@@ -11,6 +11,7 @@ import GooglePlaces
 import CoreLocation
 
 final class MapViewController: UIViewController {
+    
     // MARK: - Properties
     
     private let mainView = MapView()
@@ -39,10 +40,10 @@ final class MapViewController: UIViewController {
                 return
             }
             
-            let ListViewController = ListViewController(places: self.fetchedPlaces)
-            self.navigationController?.pushViewController(ListViewController, animated: true)
+            let listViewController = ListViewController(places: self.fetchedPlaces)
+            self.navigationController?.pushViewController(listViewController, animated: true)
             
-            ListViewController.onPlaceSelected = { [weak self] coordinate in
+            listViewController.onPlaceSelected = { [weak self] coordinate in
                 self?.mainView.moveCameraToPlace(coordinate)
                 self?.mainView.openMarkerSnippet(at: coordinate)
                 self?.navigationController?.popViewController(animated: true)

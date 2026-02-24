@@ -9,6 +9,7 @@ import UIKit
 import Kingfisher
 
 final class PlaceTableViewCell: UITableViewCell {
+    
     // MARK: - UI Components
     
     private let iconImageView: UIImageView = {
@@ -112,12 +113,12 @@ final class PlaceTableViewCell: UITableViewCell {
     func configure(with place: PlaceModel) {
         nameLabel.text = place.name
         addressLabel.text = place.fullAddress
-        ratingLabel.text = place.rating
-        distanceLabel.text = place.distance
+        ratingLabel.text = place.formattedRating
+        distanceLabel.text = place.formattedDistance
         
         iconImageView.kf.setImage(
             with: place.iconURL,
-            placeholder: UIImage(systemName: Constant.iconImage.placeHolderSystemImage)
+            placeholder: UIImage(systemName: Constant.IconImage.placeHolderSystemImage)
         )
     }
     
@@ -142,8 +143,8 @@ final class PlaceTableViewCell: UITableViewCell {
                 constant: -Constant.StackConstant.Layout.verticalAnchor
             ),
             
-            iconImageView.widthAnchor.constraint(equalToConstant: Constant.iconImage.layoutSize),
-            iconImageView.heightAnchor.constraint(equalToConstant: Constant.iconImage.layoutSize)
+            iconImageView.widthAnchor.constraint(equalToConstant: Constant.IconImage.layoutSize),
+            iconImageView.heightAnchor.constraint(equalToConstant: Constant.IconImage.layoutSize)
         ])
     }
 }
@@ -180,7 +181,7 @@ private extension PlaceTableViewCell {
             }
         }
         
-        enum iconImage {
+        enum IconImage {
             static let placeHolderSystemImage = "arrow.down.circle.dotted"
             static let layoutSize: CGFloat = 40.0
         }

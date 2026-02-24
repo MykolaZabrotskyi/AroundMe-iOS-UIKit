@@ -8,6 +8,7 @@
 import UIKit
 
 final class ListView: UIView {
+    
     // MARK: - UI Components
     
     private let tableView: UITableView = {
@@ -43,6 +44,7 @@ final class ListView: UIView {
 // MARK: - Private Methods
 
 private extension ListView {
+    
     // MARK: - Setup / Configuration
     
     func setupLayout() {

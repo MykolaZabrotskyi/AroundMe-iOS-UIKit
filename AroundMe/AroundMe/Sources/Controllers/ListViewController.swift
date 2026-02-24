@@ -9,6 +9,7 @@ import UIKit
 import CoreLocation
 
 final class ListViewController: UIViewController {
+    
     // MARK: - Properties
     
     var onPlaceSelected: ((CLLocationCoordinate2D) -> Void)?
@@ -42,9 +43,9 @@ final class ListViewController: UIViewController {
     }
 }
 
-// MARK: - UITableVIewDelegate
+// MARK: - UITableViewDataSource
 
-extension ListViewController: UITableViewDataSource, UITableViewDelegate {
+extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return places.count
     }
@@ -57,7 +58,11 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
         
         return cell
     }
-    
+}
+
+// MARK: - UITableVIewDelegate
+
+extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let selectedPlace = places[indexPath.row]
