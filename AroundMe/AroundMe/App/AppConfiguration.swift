@@ -27,5 +27,4 @@ enum AppConfiguration {
         GMSServices.provideAPIKey(apiKey)
         GMSPlacesClient.provideAPIKey(apiKey)
     }
-    
 }

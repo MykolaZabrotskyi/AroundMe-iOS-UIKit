@@ -10,48 +10,80 @@ import GooglePlaces
 
 final class PlacesService {
     
+    // MARK: - Internal Methods
+    
     func searchNearby(at location: CLLocationCoordinate2D, completion: @escaping (Result<[PlaceModel], Error>) -> Void) {
-        let circularRestriction = GMSPlaceCircularLocationOption(location, Constants.searchRadius)
-        let properties = [GMSPlaceProperty.name, GMSPlaceProperty.coordinate, GMSPlaceProperty.addressComponents].map { $0.rawValue }
-        let request = GMSPlaceSearchNearbyRequest(locationRestriction: circularRestriction, placeProperties: properties)
-        request.includedTypes = Constants.includedPlaceTypes
+        let circularRestriction = GMSPlaceCircularLocationOption(location, Constant.searchRadius)
+        let properties = [
+            GMSPlaceProperty.name,
+            GMSPlaceProperty.coordinate,
+            GMSPlaceProperty.addressComponents,
+            GMSPlaceProperty.iconImageURL,
+            GMSPlaceProperty.rating
+        ].map { $0.rawValue }
+        
+        let request = GMSPlaceSearchNearbyRequest(
+            locationRestriction: circularRestriction,
+            placeProperties: properties
+        )
+        request.includedTypes = Constant.includedPlaceTypes
         
         GMSPlacesClient.shared().searchNearby(with: request) { results, error in
-            
             guard let results, error == nil else {
                 let errorToReturn = error ??
                 NSError(
-                    domain: Constants.ErrorConstants.domain,
-                    code: Constants.ErrorConstants.code,
-                    userInfo: [NSLocalizedDescriptionKey: Constants.ErrorConstants.descriptionKey]
+                    domain: Constant.ErrorConstant.domain,
+                    code: Constant.ErrorConstant.code,
+                    userInfo: [NSLocalizedDescriptionKey: Constant.ErrorConstant.descriptionKey]
                 )
                 
                 DispatchQueue.main.async {
                     completion(.failure(errorToReturn))
                 }
+                
                 return
             }
             
-            let places = results.map { gmsPlace in
-                PlaceModel(
-                    name: gmsPlace.name ?? "",
+            let userLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+            
+            let places: [PlaceModel] = results.map { gmsPlace in
+                let placeLocation = CLLocation(
+                    latitude: gmsPlace.coordinate.latitude,
+                    longitude: gmsPlace.coordinate.longitude
+                )
+                
+                let distanceToPlace = userLocation.distance(from: placeLocation)
+                
+                return PlaceModel(
+                    name: gmsPlace.name ?? Constant.EmptyText.name,
                     coordinate: gmsPlace.coordinate,
-                    fullAddress: PlacesService.formatAddress(gmsPlace.addressComponents)
+                    fullAddress: PlacesService.formatAddress(gmsPlace.addressComponents),
+                    iconURL: gmsPlace.iconImageURL,
+                    rating: gmsPlace.rating,
+                    distance: distanceToPlace
                 )
             }
             
+            let sortedPlaces: [PlaceModel] = places.sorted(by: { firstPlace, secondPlace in
+                let firstDistance = firstPlace.distance ?? 0
+                let secondDistance = secondPlace.distance ?? 0
+                
+                return firstDistance < secondDistance
+            })
+            
             DispatchQueue.main.async {
-                completion(.success(places))
+                completion(.success(sortedPlaces))
             }
         }
     }
 }
 
+// MARK: - Private Methods
+
 private extension PlacesService {
-    
     static func formatAddress(_ components: [GMSAddressComponent]?) -> String {
         guard let components else {
-            return ""
+            return Constant.EmptyText.adress
         }
         
         let country = components.first(where: { $0.types.contains("country") })?.name ?? ""
@@ -63,16 +95,24 @@ private extension PlacesService {
     }
 }
 
+// MARK: - Constants
+
 private extension PlacesService {
-    
-    enum Constants {
+    enum Constant {
         static let searchRadius: Double = 5000.0
         static let includedPlaceTypes = ["restaurant", "cafe"]
         
-        enum ErrorConstants {
+        enum ErrorConstant {
             static let domain = "AroundMe"
             static let code = -1
             static let descriptionKey = "Unknown error"
+        }
+        
+        enum EmptyText {
+            static let adress = "Address not available"
+            static let rating = "Rating not available"
+            static let distance = "Distance not available"
+            static let name = "Name not available"
         }
     }
 }
