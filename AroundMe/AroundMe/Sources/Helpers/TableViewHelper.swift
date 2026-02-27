@@ -7,8 +7,6 @@
 
 import UIKit
 
-// MARK: - Helpers
-
 public protocol SelfIdentifiable { }
 
 public extension SelfIdentifiable {
