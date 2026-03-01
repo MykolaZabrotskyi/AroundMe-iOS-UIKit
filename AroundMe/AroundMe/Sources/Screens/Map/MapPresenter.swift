@@ -19,22 +19,19 @@ final class MapPresenter {
     
     // MARK: - Properties
     
-    weak var view: MapViewControllerProtocol?
-    
+    private weak var viewController: MapViewControllerProtocol?
     private let router: MapRouterProtocol
-    private let placesService: PlacesService
-    private var fetchedPlaces: [PlaceModel] = []
     
-    struct Dependencies {
-        let router: MapRouterProtocol
-        let placesService: PlacesService
-    }
+    private let placesService: PlacesService
+    
+    private var fetchedPlaces: [PlaceModel] = []
     
     // MARK: - Init
     
-    init(dependencies: Dependencies) {
-        self.router = dependencies.router
-        self.placesService = dependencies.placesService
+    init(router: MapRouterProtocol, placesService: PlacesService, viewController: MapViewControllerProtocol) {
+        self.router = router
+        self.placesService = placesService
+        self.viewController = viewController
     }
 }
 
@@ -46,16 +43,16 @@ extension MapPresenter: MapPresenterProtocol {
     }
     
     func didUpdateLocation(_ location: CLLocation) {
-        view?.moveCameraToUser(location.coordinate)
+        viewController?.moveCameraToUser(location.coordinate)
         
         placesService.searchNearby(at: location.coordinate) { [weak self] result in
             switch result {
             case .success(let places):
                 self?.fetchedPlaces = places
-                self?.view?.renderMarkers(for: places)
+                self?.viewController?.renderMarkers(for: places)
                 
             case .failure(let error):
-                self?.view?.showAlert(
+                self?.viewController?.showAlert(
                     title: Constant.Alert.Title.placeServiceFailure,
                     message: error.localizedDescription
                 )
@@ -68,7 +65,7 @@ extension MapPresenter: MapPresenterProtocol {
             return
         }
         
-        view?.showAlert(
+        viewController?.showAlert(
             title: Constant.Alert.Title.locationManagerFailure,
             message: error.localizedDescription
         )
@@ -77,10 +74,10 @@ extension MapPresenter: MapPresenterProtocol {
     func didChangeAuthorization(_ status: CLAuthorizationStatus) {
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
-            view?.updateMyLocationEnabled(true)
+            viewController?.updateMyLocationEnabled(true)
             
         case .denied, .restricted:
-            view?.showAlert(
+            viewController?.showAlert(
                 title: Constant.Alert.Title.authorizationDenied,
                 message: Constant.Alert.Message.authorizationDenied
             )

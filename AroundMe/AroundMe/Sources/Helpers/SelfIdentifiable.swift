@@ -1,5 +1,5 @@
 //
-//  TableViewHelper.swift
+//  SelfIdentifiable.swift
 //  AroundMe
 //
 //  Created by Mykola Zabrotskyi on 23.02.2026.

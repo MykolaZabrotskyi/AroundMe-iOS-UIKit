@@ -11,15 +11,11 @@ import CoreLocation
 final class ListAssembly {
     static func build(places: [PlaceModel],onPlaceSelected: @escaping (CLLocationCoordinate2D) -> Void) -> UIViewController {
         let router = ListRouter(onPlaceSelected: onPlaceSelected)
+        let viewController = ListViewController()
+        let presenter = ListPresenter(router: router, places: places, viewController: viewController)
         
-        let presenterDependencies = ListPresenter.Dependencies(router: router, places: places)
-        let presenter = ListPresenter(dependencies: presenterDependencies)
-        
-        let viewControllerDependencies = ListViewController.Dependencies(presenter: presenter)
-        let viewController = ListViewController(dependencies: viewControllerDependencies)
-        
-        presenter.view = viewController
-        router.viewController = viewController
+        router.inject(viewController: viewController)
+        viewController.inject(presenter: presenter)
         
         return viewController
     }

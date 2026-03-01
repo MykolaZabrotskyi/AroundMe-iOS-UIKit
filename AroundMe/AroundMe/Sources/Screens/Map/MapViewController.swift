@@ -23,13 +23,11 @@ final class MapViewController: UIViewController {
     
     // MARK: - Properties
     
-    private let presenter: MapPresenterProtocol
-    private let locationManager = CLLocationManager()
-    private var displayedMarkers: [GMSMarker] = []
+    private var presenter: MapPresenterProtocol!
     
-    struct Dependencies {
-        let presenter: MapPresenterProtocol
-    }
+    private let locationManager = CLLocationManager()
+    
+    private var displayedMarkers: [GMSMarker] = []
     
     // MARK: - UI Components
     
@@ -87,8 +85,7 @@ final class MapViewController: UIViewController {
     
     // MARK: - Init
     
-    init(dependencies: Dependencies) {
-        self.presenter = dependencies.presenter
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -104,6 +101,12 @@ final class MapViewController: UIViewController {
         setupLayout()
         applyMapStyle()
         setupLocationManager()
+    }
+    
+    // MARK: - Internal Methods
+    
+    func inject(presenter: MapPresenterProtocol) {
+        self.presenter = presenter
     }
 }
 

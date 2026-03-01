@@ -16,7 +16,7 @@ final class ListRouter {
     
     // MARK: - Properties
     
-    weak var viewController: UIViewController?
+    private weak var viewController: UIViewController?
     
     private let onPlaceSelected: (CLLocationCoordinate2D) -> Void
     
@@ -24,6 +24,12 @@ final class ListRouter {
     
     init(onPlaceSelected: @escaping (CLLocationCoordinate2D) -> Void) {
         self.onPlaceSelected = onPlaceSelected
+    }
+    
+    // MARK: - Internal Methods
+    
+    func inject(viewController: UIViewController) {
+        self.viewController = viewController
     }
 }
 

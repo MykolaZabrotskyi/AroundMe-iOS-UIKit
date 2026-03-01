@@ -11,15 +11,11 @@ final class MapAssembly {
     static func build() -> UIViewController {
         let router = MapRouter()
         let placesService = PlacesService()
+        let viewController = MapViewController()
+        let presenter = MapPresenter(router: router, placesService: placesService, viewController: viewController)
         
-        let presenterDependencies = MapPresenter.Dependencies(router: router, placesService: placesService)
-        let presenter = MapPresenter(dependencies: presenterDependencies)
-        
-        let viewControllerDependencies = MapViewController.Dependencies(presenter: presenter)
-        let viewController = MapViewController(dependencies: viewControllerDependencies)
-        
-        presenter.view = viewController
-        router.viewController = viewController
+        router.inject(viewController: viewController)
+        viewController.inject(presenter: presenter)
         
         return viewController
     }

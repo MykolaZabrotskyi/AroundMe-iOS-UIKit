@@ -9,18 +9,14 @@ import UIKit
 import CoreLocation
 
 protocol ListViewControllerProtocol: AnyObject {
-    func reloadData()
+    
 }
 
 final class ListViewController: UIViewController {
     
     // MARK: - Properties
     
-    private let presenter: ListPresenterProtocol
-    
-    struct Dependencies {
-        let presenter: ListPresenterProtocol
-    }
+    private var presenter: ListPresenterProtocol!
     
     // MARK: - UI Components
     
@@ -37,8 +33,7 @@ final class ListViewController: UIViewController {
     
     // MARK: - Init
     
-    init(dependencies: Dependencies) {
-        self.presenter = dependencies.presenter
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -55,6 +50,12 @@ final class ListViewController: UIViewController {
         
         setupLayout()
         setupTableView()
+    }
+    
+    // MARK: - Internal Methods
+    
+    func inject(presenter: ListPresenterProtocol) {
+        self.presenter = presenter
     }
 }
 
@@ -85,9 +86,7 @@ private extension ListViewController {
 // MARK: - ListViewControllerProtocol
 
 extension ListViewController: ListViewControllerProtocol {
-    func reloadData() {
-        tableView.reloadData()
-    }
+    
 }
 
 // MARK: - UITableViewDataSource

@@ -17,7 +17,13 @@ final class MapRouter {
     
     // MARK: - Properties
     
-    weak var viewController: UIViewController?
+    private weak var viewController: UIViewController?
+    
+    // MARK: - Internal Methods
+    
+    func inject(viewController: UIViewController) {
+        self.viewController = viewController
+    }
 }
 
 // MARK: - MapRouterProtocol

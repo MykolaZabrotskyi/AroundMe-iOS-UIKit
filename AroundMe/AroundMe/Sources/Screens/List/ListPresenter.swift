@@ -18,21 +18,17 @@ final class ListPresenter {
     
     // MARK: - Properties
     
-    weak var view: ListViewControllerProtocol?
-    
+    private weak var viewController: ListViewControllerProtocol?
     private let router: ListRouterProtocol
-    private var places: [PlaceModel]
     
-    struct Dependencies {
-        let router: ListRouterProtocol
-        let places: [PlaceModel]
-    }
+    private var places: [PlaceModel]
     
     // MARK: - Init
     
-    init(dependencies: Dependencies) {
-        self.router = dependencies.router
-        self.places = dependencies.places
+    init(router: ListRouterProtocol, places: [PlaceModel], viewController: ListViewControllerProtocol) {
+        self.router = router
+        self.places = places
+        self.viewController = viewController
     }
 }
 
