@@ -12,11 +12,7 @@ protocol ListViewControllerProtocol: AnyObject {
     
 }
 
-final class ListViewController: UIViewController {
-    
-    // MARK: - Properties
-    
-    private var presenter: ListPresenterProtocol!
+final class ListViewController: BaseViewController<ListPresenterProtocol> {
     
     // MARK: - UI Components
     
@@ -51,12 +47,6 @@ final class ListViewController: UIViewController {
         setupLayout()
         setupTableView()
     }
-    
-    // MARK: - Internal Methods
-    
-    func inject(presenter: ListPresenterProtocol) {
-        self.presenter = presenter
-    }
 }
 
 // MARK: - Private Methods
@@ -66,7 +56,6 @@ private extension ListViewController {
     // MARK: - Setup / Configuration
     
     func setupLayout() {
-        view.backgroundColor = .systemBackground
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([

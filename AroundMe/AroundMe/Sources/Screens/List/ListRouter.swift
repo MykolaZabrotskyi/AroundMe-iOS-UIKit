@@ -22,14 +22,9 @@ final class ListRouter {
     
     // MARK: - Init
     
-    init(onPlaceSelected: @escaping (CLLocationCoordinate2D) -> Void) {
-        self.onPlaceSelected = onPlaceSelected
-    }
-    
-    // MARK: - Internal Methods
-    
-    func inject(viewController: UIViewController) {
+    init(viewController: UIViewController, onPlaceSelected: @escaping (CLLocationCoordinate2D) -> Void) {
         self.viewController = viewController
+        self.onPlaceSelected = onPlaceSelected
     }
 }
 

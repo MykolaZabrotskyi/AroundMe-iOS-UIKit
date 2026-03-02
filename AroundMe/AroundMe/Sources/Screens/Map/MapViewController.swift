@@ -19,11 +19,9 @@ protocol MapViewControllerProtocol: AnyObject {
     func showAlert(title: String, message: String)
 }
 
-final class MapViewController: UIViewController {
+final class MapViewController: BaseViewController<MapPresenterProtocol> {
     
     // MARK: - Properties
-    
-    private var presenter: MapPresenterProtocol!
     
     private let locationManager = CLLocationManager()
     
@@ -101,12 +99,6 @@ final class MapViewController: UIViewController {
         setupLayout()
         applyMapStyle()
         setupLocationManager()
-    }
-    
-    // MARK: - Internal Methods
-    
-    func inject(presenter: MapPresenterProtocol) {
-        self.presenter = presenter
     }
 }
 
