@@ -1,13 +1,11 @@
 //
-//  TableViewHelper.swift
+//  SelfIdentifiable.swift
 //  AroundMe
 //
 //  Created by Mykola Zabrotskyi on 23.02.2026.
 //
 
 import UIKit
-
-// MARK: - Helpers
 
 public protocol SelfIdentifiable { }
 
